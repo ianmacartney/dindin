@@ -9,40 +9,7 @@
  * @module
  */
 
-import { AnyDataModel } from "convex/server";
-import { Dinner, Person } from "../../common";
+import { GenericSchema, SchemaDefinition, TableDefinition } from "convex/schema";
+import { DataModel } from "../schema";
 
-/**
- * No `schema.ts` file found!
- *
- * This generated code has permissive types like `Document = any` because
- * Convex doesn't know your schema. If you'd like more type safety, see
- * https://docs.convex.dev/using/schemas for instructions on how to add a
- * schema file.
- *
- * After you write a schema, rerun codegen with `npx convex codegen`.
- */
-
-/**
- * The names of all of your Convex tables.
- */
-//export type TableNames = string;
-
-/**
- * The type of a document stored in Convex.
- */
-//export type Document = any;
-
-/**
- * A type describing your Convex data model.
- *
- * This type includes information about what tables you have, the type of
- * documents stored in those tables, and the indexes defined on them.
- *
- * This type is used to parameterize methods like `queryGeneric` and
- * `mutationGeneric` to make them type-safe.
- */
-export type DataModel = {
-    dinners: { document: Dinner, indexes: {} },
-    person: { document: Person, indexes: {} },
-};
+export type { DataModel };
