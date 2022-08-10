@@ -2,23 +2,23 @@ import { Id } from "convex/values";
 
 export type Dinner = {
   _id: Id;
-  host: Id;
+  hostId: Id;
   address: string;
   startTime: number;
   timezone: string;
-  min_capacity: number;
+  minCapacity: number;
   targetCapacity: number;
   maxCapacity: number;
   calendarInvite: {
-    calendar: Id; // LinkedCalendar
+    calendarId: Id; // LinkedCalendar
     eventId: string;
-  }
+  };
 
   // Which reminders to send
   reminders: string[];
 };
 
-export type Person = {
+export type Account = {
   _id: Id;
   name: string;
   state: "invited" | "active" | "inactive";
@@ -26,11 +26,12 @@ export type Person = {
   phoneVerified: boolean;
   email: string | null;
   emailVerified: boolean;
+  tokenIdentifier: string;
 };
 
 export type GuestPrefs = {
   _id: Id;
-  person: Id;
+  accountId: Id;
   days: {
     monday?: number;
     tuesday?: number;
@@ -43,36 +44,36 @@ export type GuestPrefs = {
   startTime: number;
   dietPref: string[];
   dietNeed: string[];
-}
+};
 
 export type Guest = {
   _id: Id;
-  dinner: Id;
-  person: Id;
+  dinnerId: Id;
+  accountId: Id;
   // Other guests
-  bringing: Id[];
+  bringing: { name: string; email?: string }[];
   coming: boolean | null;
   comment: string | null;
-}
+};
 
 export type InviteLink = {
   _id: Id;
-  dinner: Id;
-  guestSpecific: Id | null;
+  dinnerId: Id;
+  guestSpecificId: Id | null;
   disabled: boolean;
 };
 
 export type LinkedCalendar = {
   _id: Id;
-  person: Id;
+  accountId: Id;
   accessToken: string;
   expiry: number;
 };
 
 export type InviteConstraint = {
   _id: Id;
-  author: Id;
-  guest: Id;
-  include: Id[] | null;
-  exclude: Id[] | null;
+  authorId: Id;
+  guestId: Id;
+  includeIds: Id[] | null;
+  excludeIds: Id[] | null;
 };
