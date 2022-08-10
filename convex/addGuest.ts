@@ -1,5 +1,5 @@
 import { mutation } from "./_generated/server";
-import { Account, Dinner, Guest } from "./types";
+import { User, Dinner, Guest } from "./types";
 import { Id } from "convex/values";
 import { WithoutId } from "convex/server";
 
@@ -7,31 +7,31 @@ import { WithoutId } from "convex/server";
 export default mutation(
   async (
     { db },
-    guest: Omit<WithoutId<Guest>, "accountId"> & {
-      accountId?: Guest["accountId"];
+    guest: Omit<WithoutId<Guest>, "userId"> & {
+      userId?: Guest["userId"];
     },
-    newAccount: {
+    newUser: {
       name: string;
       phone: string | null;
       email: string | null;
     }
   ): Promise<Id> => {
-    // TODO: ensure this is the logged in account
+    // TODO: ensure this is the logged in user
     // TODO: look up by email / phone?
-    const accountId =
-      guest.accountId ||
-      db.insert("accounts", {
-        name: newAccount.name,
+    const userId =
+      guest.userId ||
+      db.insert("users", {
+        name: newUser.name,
         state: "active",
-        phone: newAccount.phone,
+        phone: newUser.phone,
         phoneVerified: false,
-        email: newAccount.email,
+        email: newUser.email,
         emailVerified: false,
       });
-    // TODO: Check... real dinner, account, max >= target >= min capacity
+    // TODO: Check... real dinner, user, max >= target >= min capacity
     return db.insert("guests", {
       ...guest,
-      accountId,
+      userId,
     });
   }
 );

@@ -17,7 +17,7 @@ export default defineSchema({
     reminders: s.array(s.string()),
   }).index("by_host_time", ["hostId", "startTime"]),
 
-  accounts: defineTable({
+  users: defineTable({
     name: s.string(),
     state: s.string(),
     phone: s.union(s.string(), s.null()),
@@ -28,7 +28,7 @@ export default defineSchema({
   }),
 
   guest_prefs: defineTable({
-    accountId: s.id(),
+    userId: s.id(),
     weekdays: s.object({
       monday: s.number(),
       tuesday: s.number(),
@@ -45,7 +45,7 @@ export default defineSchema({
 
   guests: defineTable({
     dinnerId: s.id(),
-    accountId: s.id(),
+    userId: s.id(),
 
     // Other guests.object(s)
     bringing: s.array(
@@ -65,7 +65,7 @@ export default defineSchema({
   }),
 
   linked_calendars: defineTable({
-    accountId: s.id(),
+    userId: s.id(),
     accessToken: s.string(),
   }),
 
