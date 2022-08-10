@@ -10,6 +10,8 @@
  */
 
 import type addDinner from "../addDinner";
+import type addGuest from "../addGuest";
+import type updateGuest from "../updateGuest";
 
 // This jumpstarts TypeScript completion of the convex/values entry point.
 import type { Id } from "convex/values";
@@ -33,6 +35,8 @@ export type ConvexAPI = {
   queries: {};
   mutations: {
     addDinner: ClientMutation<typeof addDinner>;
+    addGuest: ClientMutation<typeof addGuest>;
+    updateGuest: ClientMutation<typeof updateGuest>;
   };
 };
 

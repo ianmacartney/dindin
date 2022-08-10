@@ -1,5 +1,5 @@
 import { mutation } from "./_generated/server";
-import { Account, Dinner, Guest } from "../common";
+import { Account, Dinner, Guest } from "./types";
 import { Id } from "convex/values";
 
 // Send a message to the given chat channel.
