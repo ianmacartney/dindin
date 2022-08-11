@@ -1,4 +1,4 @@
-import { Guest } from "./types";
+import { Guest } from "../types";
 
 export function rsvpSize(guest: Pick<Guest, "coming" | "bringing">) {
   return guest.coming ? 1 + (guest.bringing?.length || 0) : 0;

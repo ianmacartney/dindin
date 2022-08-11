@@ -1,11 +1,10 @@
-import { mutation } from "./_generated/server";
+import { DatabaseReader, mutation } from "./_generated/server";
 import { User, Dinner, Guest } from "./types";
 import { Id } from "convex/values";
 import { WithoutId } from "convex/server";
-import { getLoggedInUser } from "./getLoggedInUser";
-import { calculateAttendance, rsvpSize } from "./helpers";
+import { findUser, getLoggedInUser } from "./lib/getUser";
+import { calculateAttendance, rsvpSize } from "./lib/attendance";
 
-// Send a message to the given chat channel.
 export default mutation(
   async (
     { db, auth },
@@ -16,8 +15,9 @@ export default mutation(
       email: string | null;
     }
   ): Promise<Id> => {
-    const user = await getLoggedInUser(db, auth);
-    // TODO: look up by email / phone?
+    const user =
+      (await getLoggedInUser(db, auth)) ||
+      (await findUser(db, newUser.email, newUser.phone));
     const userId =
       user?._id ||
       db.insert("users", {

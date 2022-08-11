@@ -25,7 +25,10 @@ export default defineSchema({
     email: s.union(s.string(), s.null()),
     emailVerified: s.boolean(),
     tokenIdentifier: s.string(),
-  }),
+  })
+    .index("by_token", ["tokenIdentifier"])
+    .index("by_email", ["email"])
+    .index("by_phone", ["phone"]),
 
   guest_prefs: defineTable({
     userId: s.id(),

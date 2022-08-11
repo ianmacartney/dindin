@@ -1,7 +1,7 @@
 import { mutation } from "./_generated/server";
 import { Id } from "convex/values";
 import { User } from "./types";
-import { phone as validatePhone } from "phone";
+import { findUser, getLoggedInUser, sanitizePhone } from "./lib/getUser";
 
 // Insert or update the user in a Convex table then return the document's Id.
 //
@@ -24,80 +24,77 @@ export default mutation(async ({ db, auth }): Promise<Id> => {
     throw new Error("Called storeUser without authentication present");
   }
 
-  // Check if we've already stored this identity before.
-  const user: User | null = await db
-    .table("users")
-    .filter((q) => q.eq(q.field("tokenIdentifier"), identity.tokenIdentifier))
-    .first();
-  if (user !== null) {
-    var patch: Partial<User> | null = null;
-    // If we've seen this identity before but the name has changed, patch the value.
-    if (identity.name && user.name != identity.name) {
-      patch = { name: identity.name };
-    }
-    if (
-      identity.email &&
-      (!user.email || (identity.emailVerified && !user.emailVerified))
-    ) {
-      patch = {
-        email: identity.email.toLowerCase(),
-        ...patch,
-      };
-      if (identity.emailVerified) {
-        patch.emailVerified = true;
-        if (
-          user.email &&
-          user.email.toLowerCase() !== identity.email.toLowerCase()
-        ) {
-          console.log("Overwriting user email of " + user.email);
-        }
-      }
-    }
-    if (
-      identity.phoneNumber &&
-      (!user.phone || (identity.phoneNumberVerified && !user.phoneVerified))
-    ) {
-      patch = {
-        phone: sanitizePhone(identity.phoneNumber),
-        ...patch,
-      };
-      if (identity.phoneNumberVerified) {
-        patch.phoneVerified = true;
-        if (
-          user.phone &&
-          sanitizePhone(user.phone) !== sanitizePhone(identity.phoneNumber)
-        ) {
-          console.log("Overwriting user phone of " + user.phone);
-        }
-      }
-    }
-    if (patch !== null) {
-      console.log(
-        "Patching " +
-          Object.keys(patch).toString() +
-          " fields from " +
-          identity.issuer
-      );
-      db.patch(user._id, patch);
-    }
-    return user._id;
-  }
-  console.log("Adding a new user from identity provider " + identity.issuer);
-  return db.insert("users", {
-    name: identity.name!,
-    state: "active",
-    tokenIdentifier: identity.tokenIdentifier,
-    phone: identity.phoneNumber ? sanitizePhone(identity.phoneNumber) : null,
-    phoneVerified: identity.phoneNumberVerified || null,
-    email: identity.email?.toLowerCase() || null,
-    emailVerified: identity.emailVerified || null,
-  });
-});
+  var patch: Partial<User> = {};
 
-function sanitizePhone(phone: string) {
-  var { isValid, phoneNumber } = validatePhone(phone);
-  if (!isValid) {
-    var { isValid, phoneNumber } = validatePhone("+" + phone);
+  // Check if we've already stored this identity before.
+  const user: User | null =
+    (await getLoggedInUser(db, auth)) ||
+    (await findUser(db, identity.email, identity.phoneNumber));
+
+  if (user === null) {
+    console.log("Adding a new user from identity provider " + identity.issuer);
+
+    // Create new user
+
+    return db.insert("users", {
+      name: identity.name!,
+      state: "active",
+      tokenIdentifier: identity.tokenIdentifier,
+      phone: identity.phoneNumber ? sanitizePhone(identity.phoneNumber) : null,
+      phoneVerified: identity.phoneNumberVerified || null,
+      email: identity.email?.toLowerCase() || null,
+      emailVerified: identity.emailVerified || null,
+    });
   }
-  return isValid ? phoneNumber : null;
-}
+
+  // Update existing user
+
+  if (!user.tokenIdentifier) {
+    // We are claiming this user with this login identifier
+    patch.tokenIdentifier = identity.tokenIdentifier;
+  }
+  if (identity.name && user.name !== identity.name) {
+    patch.name = identity.name;
+  }
+  // For email & phone, only update if we didn't have it or it's now verified.
+  if (
+    identity.email &&
+    (!user.email || (identity.emailVerified && !user.emailVerified))
+  ) {
+    patch.email = identity.email.toLowerCase();
+    if (identity.emailVerified) {
+      patch.emailVerified = true;
+      if (
+        user.email &&
+        user.email.toLowerCase() !== identity.email.toLowerCase()
+      ) {
+        console.log("Overwriting user email of " + user.email);
+      }
+    }
+  }
+  if (
+    identity.phoneNumber &&
+    (!user.phone || (identity.phoneNumberVerified && !user.phoneVerified))
+  ) {
+    patch.phone = sanitizePhone(identity.phoneNumber);
+    if (identity.phoneNumberVerified) {
+      patch.phoneVerified = true;
+      if (
+        user.phone &&
+        sanitizePhone(user.phone) !== sanitizePhone(identity.phoneNumber)
+      ) {
+        console.log("Overwriting user phone of " + user.phone);
+      }
+    }
+  }
+  if (Object.keys(patch).length !== 0) {
+    console.log(
+      "Patching " +
+        Object.keys(patch).toString() +
+        " fields from " +
+        identity.issuer
+    );
+    db.patch(user._id, patch);
+  }
+  return user._id;
+});

@@ -1,8 +1,8 @@
 import { mutation } from "./_generated/server";
 import { User, Dinner, Guest } from "./types";
 import { Id } from "convex/values";
-import { getLoggedInUser } from "./getLoggedInUser";
-import { calculateAttendance, rsvpSize } from "./helpers";
+import { getLoggedInUser } from "./lib/getUser";
+import { calculateAttendance, rsvpSize } from "./lib/attendance";
 
 export default mutation(
   async ({ db, auth }, dinnerId: Id, guest: Partial<Guest>) => {
