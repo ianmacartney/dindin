@@ -56,7 +56,7 @@ export default defineSchema({
     ),
     coming: s.union(s.boolean(), s.null()),
     comment: s.union(s.string(), s.null()),
-  }),
+  }).index("by_dinner", ["dinnerId"]),
 
   invite_links: defineTable({
     dinnerId: s.id(),
