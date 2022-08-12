@@ -13,6 +13,7 @@ import type addDinner from "../addDinner";
 import type addGuest from "../addGuest";
 import type storeUser from "../storeUser";
 import type updateGuest from "../updateGuest";
+import type updateGuestPrefs from "../updateGuestPrefs";
 import type { OptimisticLocalStore as GenericOptimisticLocalStore } from "convex/browser";
 import type { ClientMutation, ClientQuery } from "convex/server";
 
@@ -32,6 +33,7 @@ export type ConvexAPI = {
     addGuest: ClientMutation<typeof addGuest>;
     storeUser: ClientMutation<typeof storeUser>;
     updateGuest: ClientMutation<typeof updateGuest>;
+    updateGuestPrefs: ClientMutation<typeof updateGuestPrefs>;
   };
 };
 
