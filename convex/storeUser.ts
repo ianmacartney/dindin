@@ -1,5 +1,5 @@
 import { mutation } from "./_generated/server";
-import { Id } from "convex/values";
+import { Id } from "./_generated/dataModel";
 import { User } from "./types";
 import { findUser, getLoggedInUser, sanitizePhone } from "./lib/getUser";
 
@@ -18,7 +18,7 @@ import { findUser, getLoggedInUser, sanitizePhone } from "./lib/getUser";
 // presence of which depends on the identity provider chosen. It's up to the
 // application developer to determine which ones are available and to decide
 // which of those need to be persisted.
-export default mutation(async ({ db, auth }): Promise<Id> => {
+export default mutation(async ({ db, auth }) => {
   const identity = await auth.getUserIdentity();
   if (!identity) {
     throw new Error("Called storeUser without authentication present");
@@ -41,9 +41,9 @@ export default mutation(async ({ db, auth }): Promise<Id> => {
       state: "active",
       tokenIdentifier: identity.tokenIdentifier,
       phone: identity.phoneNumber ? sanitizePhone(identity.phoneNumber) : null,
-      phoneVerified: identity.phoneNumberVerified || null,
+      phoneVerified: identity.phoneNumberVerified || false,
       email: identity.email?.toLowerCase() || null,
-      emailVerified: identity.emailVerified || null,
+      emailVerified: identity.emailVerified || false,
     });
   }
 

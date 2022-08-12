@@ -1,20 +1,18 @@
 import { DatabaseReader, mutation } from "./_generated/server";
 import { User, Dinner, Guest } from "./types";
-import { Id } from "convex/values";
-import { WithoutId } from "convex/server";
 import { findUser, getLoggedInUser } from "./lib/getUser";
 import { calculateAttendance, rsvpSize } from "./lib/attendance";
 
 export default mutation(
   async (
     { db, auth },
-    guest: Omit<WithoutId<Guest>, "userId">,
+    guest: Omit<Guest, "userId" | "_id">,
     newUser: {
       name: string;
       phone: string | null;
       email: string | null;
     }
-  ): Promise<Id> => {
+  ) => {
     const user =
       (await getLoggedInUser(db, auth)) ||
       (await findUser(db, newUser.email, newUser.phone));
@@ -27,9 +25,10 @@ export default mutation(
         phoneVerified: false,
         email: newUser.email,
         emailVerified: false,
+        tokenIdentifier: null,
       });
 
-    const dinner: Dinner = await db.get(guest.dinnerId as Id);
+    const dinner = await db.get(guest.dinnerId);
     if (dinner === null) throw "No dinner found";
     const guests = await db
       .table("guests")

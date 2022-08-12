@@ -2,7 +2,7 @@ import { defineSchema, defineTable, s } from "convex/schema";
 
 export default defineSchema({
   dinners: defineTable({
-    hostId: s.id(),
+    hostId: s.id("users"),
     address: s.string(),
     startTime: s.number(),
     timezone: s.string(),
@@ -10,7 +10,7 @@ export default defineSchema({
     targetCapacity: s.number(),
     maxCapacity: s.number(),
     calendarInvite: s.object({
-      calendarId: s.id(), // LinkedCalendar
+      calendarId: s.id("linked_calendars"),
       eventId: s.string(),
     }),
     // Which reminders to send
@@ -24,14 +24,14 @@ export default defineSchema({
     phoneVerified: s.boolean(),
     email: s.union(s.string(), s.null()),
     emailVerified: s.boolean(),
-    tokenIdentifier: s.string(),
+    tokenIdentifier: s.union(s.string(), s.null()),
   })
     .index("by_token", ["tokenIdentifier"])
     .index("by_email", ["email"])
     .index("by_phone", ["phone"]),
 
   guest_prefs: defineTable({
-    userId: s.id(),
+    userId: s.id("users"),
     weekdays: s.object({
       monday: s.number(),
       tuesday: s.number(),
@@ -47,8 +47,8 @@ export default defineSchema({
   }),
 
   guests: defineTable({
-    dinnerId: s.id(),
-    userId: s.id(),
+    dinnerId: s.id("dinners"),
+    userId: s.id("users"),
 
     // Other guests.object(s)
     bringing: s.array(
@@ -62,20 +62,20 @@ export default defineSchema({
   }).index("by_dinner", ["dinnerId"]),
 
   invite_links: defineTable({
-    dinnerId: s.id(),
-    guestSpecificId: s.union(s.id(), s.null()),
+    dinnerId: s.id("dinners"),
+    guestSpecificId: s.union(s.id("users"), s.null()),
     disabled: s.boolean(),
   }),
 
   linked_calendars: defineTable({
-    userId: s.id(),
+    userId: s.id("users"),
     accessToken: s.string(),
   }),
 
   invite_constraints: defineTable({
-    authorId: s.id(),
-    guestId: s.id(),
-    includeIds: s.array(s.id()),
-    excludeIds: s.array(s.id()),
+    authorId: s.id("users"),
+    guestId: s.id("users"),
+    includeIds: s.array(s.id("users")),
+    excludeIds: s.array(s.id("users")),
   }),
 });

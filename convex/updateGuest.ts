@@ -1,14 +1,14 @@
 import { mutation } from "./_generated/server";
 import { User, Dinner, Guest } from "./types";
-import { Id } from "convex/values";
+import { Id } from "./_generated/dataModel";
 import { getLoggedInUser } from "./lib/getUser";
 import { calculateAttendance, rsvpSize } from "./lib/attendance";
 
 export default mutation(
-  async ({ db, auth }, dinnerId: Id, guest: Partial<Guest>) => {
+  async ({ db, auth }, dinnerId: Id<"dinners">, guest: Partial<Guest>) => {
     const user = await getLoggedInUser(db, auth);
     if (user === null) throw "Not logged in";
-    const dinner: Dinner = await db.get(dinnerId);
+    const dinner = await db.get(dinnerId);
     if (dinner === null) throw "Unknown dinner";
     if (guest.userId && !guest.userId.equals(user._id))
       throw "Trying to change guest to a different user";
