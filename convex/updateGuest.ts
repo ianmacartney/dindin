@@ -1,5 +1,5 @@
 import { mutation } from "./_generated/server";
-import { User, Dinner, Guest } from "./types";
+import { Guest } from "./types";
 import { Id } from "./_generated/dataModel";
 import { getLoggedInUser } from "./lib/getUser";
 import { calculateAttendance, rsvpSize } from "./lib/attendance";

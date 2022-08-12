@@ -1,6 +1,5 @@
 import { mutation } from "./_generated/server";
 import { Dinner } from "./types";
-import { Id } from "./_generated/dataModel";
 import { getLoggedInUser } from "./lib/getUser";
 
 // Send a message to the given chat channel.

@@ -1,5 +1,5 @@
-import { DatabaseReader, mutation } from "./_generated/server";
-import { User, Dinner, Guest } from "./types";
+import { mutation } from "./_generated/server";
+import { Guest } from "./types";
 import { findUser, getLoggedInUser } from "./lib/getUser";
 import { calculateAttendance, rsvpSize } from "./lib/attendance";
 
