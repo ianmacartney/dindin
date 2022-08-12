@@ -44,7 +44,7 @@ export default defineSchema({
     startTime: s.number(),
     dietPref: s.array(s.string()),
     dietNeed: s.array(s.string()),
-  }),
+  }).index("by_userId", ["userId"]),
 
   guests: defineTable({
     dinnerId: s.id("dinners"),
