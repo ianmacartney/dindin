@@ -48,6 +48,7 @@ export default mutation(async ({ db, auth }) => {
 
   // Update existing user
 
+  patch.state = "active";
   if (!user.tokenIdentifier) {
     // We are claiming this user with this login identifier
     patch.tokenIdentifier = identity.tokenIdentifier;

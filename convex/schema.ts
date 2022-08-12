@@ -1,5 +1,10 @@
-import { defineSchema, defineTable, s } from "convex/schema";
+import { defineSchema, defineTable, s, SchemaType } from "convex/schema";
 
+function stringLiteral<StringLiteral extends string>(
+  stringLiteral: StringLiteral
+): SchemaType<StringLiteral, never> {
+  return null as any;
+}
 export default defineSchema({
   dinners: defineTable({
     hostId: s.id("users"),
@@ -19,7 +24,11 @@ export default defineSchema({
 
   users: defineTable({
     name: s.string(),
-    state: s.string(),
+    state: s.union(
+      stringLiteral("invited"),
+      stringLiteral("active"),
+      stringLiteral("inactive")
+    ),
     phone: s.union(s.string(), s.null()),
     phoneVerified: s.boolean(),
     email: s.union(s.string(), s.null()),

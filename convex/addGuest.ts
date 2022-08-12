@@ -20,7 +20,7 @@ export default mutation(
       user?._id ||
       db.insert("users", {
         name: newUser.name,
-        state: "active",
+        state: "invited",
         phone: newUser.phone,
         phoneVerified: false,
         email: newUser.email,
