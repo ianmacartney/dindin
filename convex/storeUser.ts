@@ -1,5 +1,4 @@
 import { mutation } from "./_generated/server";
-import { Id } from "./_generated/dataModel";
 import { User } from "./types";
 import { findUser, getLoggedInUser, sanitizePhone } from "./lib/getUser";
 
