@@ -1,6 +1,6 @@
 import { Handler } from "@netlify/functions";
 import { ConvexHttpClient } from "convex/browser";
-import { Id } from "convex/values";
+import { jsonToConvex } from "convex/values";
 import fetch from "node-fetch";
 
 import convexConfig from "../../convex.json";
@@ -26,14 +26,14 @@ interface GiphyResponse {
 // Post a GIF chat message corresponding to the query string.
 const handler: Handler = async (event, context) => {
   const params = JSON.parse(event.body!);
-  const channelId = Id.fromJSON(params.channel);
+  const channelId = jsonToConvex(params.channel);
   const token = params.token;
   convex.setAuth(token);
 
   // Fetch GIF url from GIPHY.
   const gif = await fetch(giphyUrl(params.query))
-    .then(response => response.json() as Promise<GiphyResponse>)
-    .then(json => json.data.embed_url);
+    .then((response) => response.json() as Promise<GiphyResponse>)
+    .then((json) => json.data.embed_url);
 
   // Write GIF url to Convex.
   await convex.mutation("sendMessage")(channelId, "giphy", gif);
