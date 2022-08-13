@@ -2,8 +2,12 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
+import Calendar from "react-calendar";
+import { useState } from "react";
+import "react-calendar/dist/Calendar.css";
 
 const Home: NextPage = () => {
+  const [date, setDate] = useState(new Date());
   return (
     <div className={styles.container}>
       <Head>
@@ -18,34 +22,41 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <h1 className={styles.title}>Din Din</h1>
 
-        <p className={styles.description}>Let's eat at my place.</p>
+        <p className={styles.description}>Let&apos;s eat at my place.</p>
 
         <div className={styles.grid}>
-          <div className={styles.card}>
-            <h2>Location</h2>
-            <input type="text"></input>
-          </div>
+          <form>
+            <div className={styles.card}>
+              <h2>Location</h2>
+              <input type="text"></input>
+            </div>
 
-          <div className={styles.card}>
-            <h2>Date</h2>
-            <input type="date"></input>
-          </div>
+            <div className={styles.card}>
+              <h2>Date</h2>
+              <Calendar
+                minDate={new Date()}
+                defaultValue={date}
+                onClickDay={setDate}
+              />
+              <input type="date"></input>
+            </div>
 
-          <div className={styles.card}>
-            <h2>Time</h2>
-            <input type="time"></input>
-          </div>
+            <div className={styles.card}>
+              <h2>Time</h2>
+              <input type="time"></input>
+            </div>
 
-          <div className={styles.card}>
-            <h2>Capacity</h2>
-            <p>
-              Min: <input type="number" value="3"></input>
-            </p>
-            <p>
-              Max: <input type="number" value="20"></input>
-            </p>
-            <input type="range" min="0" max="20" value="7"></input>
-          </div>
+            <div className={styles.card}>
+              <h2>Capacity</h2>
+              <p>
+                Min: <input type="number" value="3"></input>
+              </p>
+              <p>
+                Max: <input type="number" value="20"></input>
+              </p>
+              <input type="range" min="0" max="20" value="7"></input>
+            </div>
+          </form>
         </div>
       </main>
 
