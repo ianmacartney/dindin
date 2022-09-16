@@ -7,7 +7,17 @@ import { useState } from "react";
 import "react-calendar/dist/Calendar.css";
 
 const Home: NextPage = () => {
-  const [date, setDate] = useState(new Date());
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const [date, setDate] = useState<string>(
+    tomorrow.toISOString().split("T")[0]
+  );
+  const [time, setTime] = useState<string>("19:00");
+  const [location, setLocation] = useState<string>("TBD");
+  const [minCapacity, setMinCapacity] = useState(3);
+  const [maxCapacity, setMaxCapacity] = useState(15);
+  const [targetCapacity, setTargetCapacity] = useState(6);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -25,37 +35,75 @@ const Home: NextPage = () => {
         <p className={styles.description}>Let&apos;s eat at my place.</p>
 
         <div className={styles.grid}>
-          <form>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              console.log({ date, time });
+            }}
+          >
             <div className={styles.card}>
               <h2>Location</h2>
-              <input type="text"></input>
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => {
+                  setLocation(e.target.value);
+                }}
+              ></input>
             </div>
 
             <div className={styles.card}>
               <h2>Date</h2>
-              <Calendar
-                minDate={new Date()}
-                defaultValue={date}
-                onClickDay={setDate}
-              />
-              <input type="date"></input>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => {
+                  setDate(e.target.value);
+                }}
+              ></input>
             </div>
 
             <div className={styles.card}>
               <h2>Time</h2>
-              <input type="time"></input>
+              <input
+                type="time"
+                value={time}
+                onChange={(e) => {
+                  setTime(e.target.value);
+                }}
+              ></input>
             </div>
 
             <div className={styles.card}>
               <h2>Capacity</h2>
               <p>
-                Min: <input type="number" value="3"></input>
+                Min:{" "}
+                <input
+                  type="number"
+                  value={minCapacity}
+                  onChange={(e) => setMinCapacity(Number(e.target.value))}
+                ></input>
+                <br />
+                Target:
+                {" " +
+                  Math.max(Math.min(targetCapacity, maxCapacity), minCapacity)}
+                <input
+                  type="range"
+                  min={minCapacity}
+                  max={maxCapacity}
+                  value={targetCapacity}
+                  onChange={(e) => setTargetCapacity(Number(e.target.value))}
+                ></input>
+                <br />
+                Max:{" "}
+                <input
+                  type="number"
+                  value={maxCapacity}
+                  onChange={(e) => setMaxCapacity(Number(e.target.value))}
+                ></input>
               </p>
-              <p>
-                Max: <input type="number" value="20"></input>
-              </p>
-              <input type="range" min="0" max="20" value="7"></input>
             </div>
+            <input type="submit" />
           </form>
         </div>
       </main>
