@@ -58,18 +58,20 @@ const Home: NextPage = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              const startDate = new Date(date + " " + time);
-              const startTime = startDate.getTime() / 1000;
+              const startTime = new Date(date + " " + time).getTime() / 1000;
+              const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
               addDinner({
                 address: location,
-                targetCapacity,
-                calendarInvite: null,
                 maxCapacity,
                 minCapacity,
+                targetCapacity,
                 startTime,
+                timezone,
+                calendarInvite: null,
                 reminders: [],
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-              }).then(console.log);
+              }).then((dinnerId: Id<"dinners">) =>
+                console.log({ dinnerId: dinnerId.toString() })
+              );
             }}
           >
             <div className={styles.card}>

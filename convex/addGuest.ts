@@ -6,7 +6,7 @@ import { calculateAttendance, rsvpSize } from "./lib/attendance";
 export default mutation(
   async (
     { db, auth },
-    guest: Omit<Guest, "userId" | "_id">,
+    guest: Omit<Guest, "userId" | "_id" | "_creationTime">,
     newUser: {
       name: string;
       phone: string | null;

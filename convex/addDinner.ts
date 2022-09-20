@@ -6,7 +6,7 @@ import { getLoggedInUser } from "./lib/getUser";
 export default mutation(
   async (
     { db, auth },
-    dinner: Omit<Dinner, "_id" | "_creationTime" | "hostId">
+    dinner: Omit<Dinner, "hostId" | "_id" | "_creationTime">
   ) => {
     const user = await getLoggedInUser(db, auth);
     if (!user) throw "User isn't logged in";
