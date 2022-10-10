@@ -3,8 +3,11 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import Calendar from "react-calendar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "react-calendar/dist/Calendar.css";
+import { useMutation } from "../convex/_generated/react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { Id } from "../convex/_generated/dataModel";
 
 const Home: NextPage = () => {
   const tomorrow = new Date();
@@ -17,7 +20,23 @@ const Home: NextPage = () => {
   const [minCapacity, setMinCapacity] = useState(3);
   const [maxCapacity, setMaxCapacity] = useState(15);
   const [targetCapacity, setTargetCapacity] = useState(6);
-
+  const addDinner = useMutation("addDinner");
+  const { logout } = useAuth0();
+  const [userId, setUserId] = useState<Id<"users"> | null>(null);
+  const storeUser = useMutation("storeUser");
+  // Call the `storeUser` mutation function to store
+  // the current user in the `users` table and return the `Id` value.
+  useEffect(() => {
+    // Store the user in the database.
+    // Recall that `storeUser` gets the user information via the `auth`
+    // object on the server. You don't need to pass anything manually here.
+    async function createUser() {
+      const id = await storeUser();
+      setUserId(id);
+    }
+    createUser();
+    return () => setUserId(null);
+  }, [storeUser]);
   return (
     <div className={styles.container}>
       <Head>
@@ -31,6 +50,7 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>Din Din</h1>
+        <button onClick={() => logout()}> Log Out </button>
 
         <p className={styles.description}>Let&apos;s eat at my place.</p>
 
@@ -38,7 +58,18 @@ const Home: NextPage = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              console.log({ date, time });
+              const startDate = new Date(date + " " + time);
+              const startTime = startDate.getTime() / 1000;
+              addDinner({
+                address: location,
+                targetCapacity,
+                calendarInvite: null,
+                maxCapacity,
+                minCapacity,
+                startTime,
+                reminders: [],
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+              }).then(console.log);
             }}
           >
             <div className={styles.card}>

@@ -6,9 +6,10 @@ export async function getLoggedInUser(db: DatabaseReader, auth: Auth) {
   const identity = await auth.getUserIdentity();
   if (!identity) return null;
   const user = await db
-    .table("users")
-    .index("by_token")
-    .range((q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+    .query("users")
+    .withIndex("by_token", (q) =>
+      q.eq("tokenIdentifier", identity.tokenIdentifier)
+    )
     .filter((q) => q.eq(q.field("state"), "active"))
     .first();
   return user;
@@ -21,17 +22,15 @@ export async function findUser(
 ) {
   if (email) {
     return await db
-      .table("users")
-      .index("by_email")
-      .range((q) => q.eq("email", email.toLowerCase()))
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email.toLowerCase()))
       .filter((q) => q.eq(q.field("state"), "active"))
       .first();
   }
   if (phone) {
     return await db
-      .table("users")
-      .index("by_phone")
-      .range((q) => q.eq("phone", sanitizePhone(phone)))
+      .query("users")
+      .withIndex("by_phone", (q) => q.eq("phone", sanitizePhone(phone)))
       .filter((q) => q.eq(q.field("state"), "active"))
       .first();
   }

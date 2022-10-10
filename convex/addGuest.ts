@@ -18,7 +18,7 @@ export default mutation(
       (await findUser(db, newUser.email, newUser.phone));
     const userId =
       user?._id ||
-      db.insert("users", {
+      (await db.insert("users", {
         name: newUser.name,
         state: "invited",
         phone: newUser.phone,
@@ -26,19 +26,19 @@ export default mutation(
         email: newUser.email,
         emailVerified: false,
         tokenIdentifier: null,
-      });
+      }));
 
     const dinner = await db.get(guest.dinnerId);
     if (dinner === null) throw "No dinner found";
     const guests = await db
-      .table("guests")
+      .query("guests")
       .filter((q) => q.eq(q.field("dinnerId"), dinner._id))
       .collect();
     const { coming } = calculateAttendance(guests);
     if (coming + rsvpSize(guest as Guest) > dinner.maxCapacity) {
       throw "Too many people";
     }
-    return db.insert("guests", {
+    return await db.insert("guests", {
       ...guest,
       userId,
     });

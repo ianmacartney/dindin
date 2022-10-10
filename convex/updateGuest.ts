@@ -13,7 +13,7 @@ export default mutation(
     if (guest.userId && !guest.userId.equals(user._id))
       throw "Trying to change guest to a different user";
     const guests = await db
-      .table("guests")
+      .query("guests")
       .filter((q) => q.eq(q.field("dinnerId"), dinnerId))
       .collect();
     const oldGuest = guests.reduce((old: Guest | null, g) => {

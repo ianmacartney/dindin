@@ -1,10 +1,5 @@
 import { defineSchema, defineTable, s, SchemaType } from "convex/schema";
 
-function stringLiteral<StringLiteral extends string>(
-  stringLiteral: StringLiteral
-): SchemaType<StringLiteral, never> {
-  return null as any;
-}
 export default defineSchema({
   dinners: defineTable({
     hostId: s.id("users"),
@@ -14,10 +9,13 @@ export default defineSchema({
     minCapacity: s.number(),
     targetCapacity: s.number(),
     maxCapacity: s.number(),
-    calendarInvite: s.object({
-      calendarId: s.id("linked_calendars"),
-      eventId: s.string(),
-    }),
+    calendarInvite: s.union(
+      s.null(),
+      s.object({
+        calendarId: s.id("linked_calendars"),
+        eventId: s.string(),
+      })
+    ),
     // Which reminders to send
     reminders: s.array(s.string()),
   }).index("by_host_time", ["hostId", "startTime"]),
@@ -25,9 +23,9 @@ export default defineSchema({
   users: defineTable({
     name: s.string(),
     state: s.union(
-      stringLiteral("invited"),
-      stringLiteral("active"),
-      stringLiteral("inactive")
+      s.literal("invited"),
+      s.literal("active"),
+      s.literal("inactive")
     ),
     phone: s.union(s.string(), s.null()),
     phoneVerified: s.boolean(),

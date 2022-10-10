@@ -11,9 +11,8 @@ export default mutation(
     if (user !== null && !user._id.equals(guestPrefs.userId))
       throw "Wrong user's prefs";
     const allPrefs = await db
-      .table("guest_prefs")
-      .index("by_userId")
-      .range((q) => q.eq("userId", guestPrefs.userId))
+      .query("guest_prefs")
+      .withIndex("by_userId", (q) => q.eq("userId", guestPrefs.userId))
       .collect();
     if (allPrefs.length > 1) throw "Duplicate guest preferences";
     if (allPrefs.length === 1) {

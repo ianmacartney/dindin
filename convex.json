@@ -1,6 +1,12 @@
 {
-  "authInfo": [],
+  "project": "grieving-sardine-299",
+  "team": "ianhmacartney",
+  "prodUrl": "https://grieving-sardine-299.convex.cloud",
   "functions": "convex/",
-  "instanceName": "grieving-sardine-299",
-  "origin": "https://grieving-sardine-299.convex.cloud"
+  "authInfo": [
+    {
+      "domain": "https://dev-nal5p3qv.us.auth0.com/",
+      "applicationID": "IReH9rKDCTU8QtZv9W2MSUV9bZOreXEp"
+    }
+  ]
 }
