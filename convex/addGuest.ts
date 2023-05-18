@@ -6,11 +6,16 @@ import { calculateAttendance, rsvpSize } from "./lib/attendance";
 export default mutation(
   async (
     { db, auth },
-    guest: Omit<Guest, "userId" | "_id" | "_creationTime">,
-    newUser: {
-      name: string;
-      phone: string | null;
-      email: string | null;
+    {
+      guest,
+      newUser,
+    }: {
+      guest: Omit<Guest, "userId" | "_id" | "_creationTime">;
+      newUser: {
+        name: string;
+        phone: string | null;
+        email: string | null;
+      };
     }
   ) => {
     const user =
@@ -35,9 +40,9 @@ export default mutation(
       .filter((q) => q.eq(q.field("dinnerId"), dinner._id))
       .collect();
     const { coming } = calculateAttendance(guests);
-    if (coming + rsvpSize(guest as Guest) > dinner.maxCapacity) {
-      throw "Too many people";
-    }
+    // if (coming + rsvpSize(guest as Guest) > dinner.maxCapacity) {
+    //   throw "Too many people";
+    // }
     return await db.insert("guests", {
       ...guest,
       userId,

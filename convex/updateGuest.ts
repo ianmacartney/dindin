@@ -5,7 +5,10 @@ import { getLoggedInUser } from "./lib/getUser";
 import { calculateAttendance, rsvpSize } from "./lib/attendance";
 
 export default mutation(
-  async ({ db, auth }, dinnerId: Id<"dinners">, guest: Partial<Guest>) => {
+  async (
+    { db, auth },
+    { dinnerId, guest }: { dinnerId: Id<"dinners">; guest: Partial<Guest> }
+  ) => {
     const user = await getLoggedInUser(db, auth);
     if (user === null) throw "Not logged in";
     const dinner = await db.get(dinnerId);
@@ -31,9 +34,9 @@ export default mutation(
     const updated = Object.assign({ ...oldGuest }, guest);
     const { coming } = calculateAttendance(guests);
     const delta = rsvpSize(updated) - rsvpSize(oldGuest);
-    if (delta > 0 && coming + delta > dinner.maxCapacity) {
-      throw "Too many people";
-    }
+    // TODO: if (delta > 0 && coming + delta > dinner.maxCapacity) {
+    //   throw "Too many people";
+    // }
     db.patch(oldGuest._id, guest);
     return oldGuest;
   }
